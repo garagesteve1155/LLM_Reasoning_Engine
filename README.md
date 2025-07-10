@@ -12,6 +12,8 @@ locally and adds a multi-pass reasoning loop:
 The progress bar reflects each internal pass so you know the model
 hasn’t frozen.  Prompts and responses are labelled in the chat pane.
 
+You must have Mistral 7B Instruct v0.3 already saved to a folder on your computer.
+
 ## Quick start
 ```bash
 git clone https://github.com/garagesteve1155/mistral-reasoning-gui
