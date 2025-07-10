@@ -1,0 +1,8 @@
+# Core
+torch>=2.0
+transformers>=4.39
+bitsandbytes>=0.42
+accelerate>=0.28
+
+# GUI (tkinter ships with CPython on Windows/macOS;
+# linux users may need `sudo apt install python3-tk`)
