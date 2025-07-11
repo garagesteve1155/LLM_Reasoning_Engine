@@ -12,7 +12,7 @@ locally and adds a multi-pass reasoning loop:
 The progress bar reflects each internal pass so you know the model
 hasn’t frozen.  Prompts and responses are labelled in the chat pane.
 
-You must have Mistral 7B Instruct v0.3 already saved to a folder on your computer. If you want to use a different LLM, simply modify the model loading area, the llm method that actually calls the LLM, and any formatting methods to make it match the required formatting for whichever LLM you want to use. 
+You must have Mistral 7B Instruct v0.3 already saved to a folder on your computer. If you want to use a different LLM, simply modify the model loading area, the llm method that actually calls the LLM, and any formatting methods to make it match the required prompt formatting for whichever LLM you want to use. 
 
 You can even modify the llm method to send API requests to an online model instead of running one yourself!
 
