@@ -1,4 +1,4 @@
-A reasoning system for Mistral 7b Instruct v0.3
+A reasoning system for Mistral 7b Instruct v0.3 (Or literally any LLM with a large enough context window and some simple modifications to the script)
 
 Small desktop app (Tkinter) that runs a single **Mistral-7B** model
 locally and adds a multi-pass reasoning loop:
