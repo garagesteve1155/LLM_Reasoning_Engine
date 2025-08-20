@@ -4,7 +4,7 @@ from tkinter.scrolledtext import ScrolledText
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 # === Configuration ===
-BASE_MODEL_PATH = "C:/Complete/Path/To/Model/Folder"
+BASE_MODEL_PATH = "C:/Users/garag/OneDrive/Desktop/NetAI/mistral_7b_instruct"
 
 # === CUDA + model init ===
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
@@ -123,7 +123,63 @@ def rewrite_draft(user_prompt: str, draft: str, critique: str) -> str:
     )
     return llm(revise_prompt, max_new_tokens=1024, temperature=0.4)
 
+# Function for importable use in other scripts
+def reason(user_prompt: str, add_to_history: bool = True, progress_cb=None) -> str:
+    """
+    Importable entry point for external callers (e.g., the autocoder).
+    Runs plan → steps → synth → critique → rewrite and returns the final string.
+    If add_to_history is True, appends (user_prompt, final) to CHAT_HISTORY.
+    If provided, progress_cb(phase, payload) will be called at:
+        "plan"     -> payload = list[str] steps
+        "step"     -> payload = None (called after each step completes)
+        "synth"    -> payload = draft string
+        "critique" -> payload = critique string
+        "final"    -> payload = final string
+    """
+    # Plan
+    steps = get_plan(user_prompt)
+    if progress_cb:
+        try:
+            progress_cb("plan", steps)
+        except Exception:
+            pass
+
+    # Execute steps
+    step_cb = (lambda: progress_cb("step", None)) if progress_cb else None
+    thoughts = run_steps(user_prompt, steps, progress_cb=step_cb)
+
+    # Synthesize
+    draft = synthesize(user_prompt, steps, thoughts)
+    if progress_cb:
+        try:
+            progress_cb("synth", draft)
+        except Exception:
+            pass
+
+    # Critique
+    critique = critique_draft(user_prompt, draft)
+    if progress_cb:
+        try:
+            progress_cb("critique", critique)
+        except Exception:
+            pass
+
+    # Rewrite (if needed)
+    final = draft if "ok" in (critique or "").lower() else rewrite_draft(user_prompt, draft, critique)
+
+    if add_to_history:
+        CHAT_HISTORY.append((user_prompt, final))
+
+    if progress_cb:
+        try:
+            progress_cb("final", final)
+        except Exception:
+            pass
+
+    return final
+
 # === GUI (Tkinter) ===
+
 class ChatGUI:
     def __init__(self):
         self.root = tk.Tk()
